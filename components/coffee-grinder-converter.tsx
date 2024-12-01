@@ -1,10 +1,26 @@
 'use client';
+
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 
-const grinderData = {
+interface GrinderData {
+  micronsPerClick: number;
+  maxClicks: number;
+  baseOffset: number;
+}
+
+interface GrinderDataMap {
+  [key: string]: GrinderData;
+}
+
+interface ConversionResult {
+  clicks: number;
+  microns: number;
+}
+
+const grinderData: GrinderDataMap = {
   'Kingrinder K6': {
     micronsPerClick: 16,
     maxClicks: 240,
@@ -67,24 +83,24 @@ const grinderData = {
   }
 };
 
-const calculateMicrons = (grinder, clicks) => {
+const calculateMicrons = (grinder: string, clicks: number): number => {
   const { micronsPerClick, baseOffset } = grinderData[grinder];
   return baseOffset + (clicks * micronsPerClick);
 };
 
-const calculateClicks = (grinder, targetMicrons) => {
+const calculateClicks = (grinder: string, targetMicrons: number): number => {
   const { micronsPerClick, baseOffset, maxClicks } = grinderData[grinder];
   const clicks = Math.round((targetMicrons - baseOffset) / micronsPerClick);
   return Math.min(Math.max(0, clicks), maxClicks);
 };
 
 const CoffeeGrinderConverter = () => {
-  const [sourceGrinder, setSourceGrinder] = useState('');
-  const [targetGrinder, setTargetGrinder] = useState('');
-  const [sourceValue, setSourceValue] = useState('');
-  const [result, setResult] = useState(null);
+  const [sourceGrinder, setSourceGrinder] = useState<string>('');
+  const [targetGrinder, setTargetGrinder] = useState<string>('');
+  const [sourceValue, setSourceValue] = useState<string>('');
+  const [result, setResult] = useState<ConversionResult | null>(null);
 
-  const handleConversion = (value) => {
+  const handleConversion = (value: string) => {
     if (!sourceGrinder || !targetGrinder || !value) {
       setResult(null);
       return;
@@ -110,7 +126,7 @@ const CoffeeGrinderConverter = () => {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">From Grinder:</label>
-            <Select value={sourceGrinder} onValueChange={(value) => {
+            <Select value={sourceGrinder} onValueChange={(value: string) => {
               setSourceGrinder(value);
               setSourceValue('');
               setResult(null);
@@ -135,7 +151,7 @@ const CoffeeGrinderConverter = () => {
 
           <div className="space-y-2">
             <label className="text-sm font-medium">To Grinder:</label>
-            <Select value={targetGrinder} onValueChange={(value) => {
+            <Select value={targetGrinder} onValueChange={(value: string) => {
               setTargetGrinder(value);
               setResult(null);
             }}>
@@ -162,7 +178,7 @@ const CoffeeGrinderConverter = () => {
             <Input
               type="number"
               value={sourceValue}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setSourceValue(e.target.value);
                 handleConversion(e.target.value);
               }}
