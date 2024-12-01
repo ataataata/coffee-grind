@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Analytics } from "@vercel/analytics/react"
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
