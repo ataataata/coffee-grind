@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Analytics } from "@vercel/analytics/react"
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { Analytics } from "@vercel/analytics/react";
 
 interface GrinderData {
   micronsPerClick: number;
@@ -126,105 +126,116 @@ const CoffeeGrinderConverter = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md mx-4">
-        <CardHeader>
-          <CardTitle className="text-center">Coffee Grinder Size Converter</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">From Grinder:</label>
-            <Select value={sourceGrinder} onValueChange={(value: string) => {
-              setSourceGrinder(value);
-              setSourceValue('');
-              setResult(null);
-            }}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select source grinder" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.keys(grinderData).map(grinder => (
-                  <SelectItem key={grinder} value={grinder}>
-                    {grinder}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {sourceGrinder && (
-              <p className="text-xs text-gray-600">
-                {grinderData[sourceGrinder].micronsPerClick} microns per click, max {grinderData[sourceGrinder].maxClicks} clicks
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">To Grinder:</label>
-            <Select value={targetGrinder} onValueChange={(value: string) => {
-              setTargetGrinder(value);
-              setResult(null);
-            }}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select target grinder" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.keys(grinderData).map(grinder => (
-                  <SelectItem key={grinder} value={grinder}>
-                    {grinder}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {targetGrinder && (
-              <p className="text-xs text-gray-600">
-                {grinderData[targetGrinder].micronsPerClick} microns per click, max {grinderData[targetGrinder].maxClicks} clicks
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Grind Setting (clicks):</label>
-            <Input
-              type="number"
-              step="1"
-              value={sourceValue}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                const value = e.target.value;
-                // Only allow positive integers
-                if (/^\d*$/.test(value)) { // This regex only allows digits
-                  setSourceValue(value);
-                  handleConversion(value);
-                }
-              }}
-              onKeyPress={(e) => {
-                // Prevent non-numeric input
-                if (!/[0-9]/.test(e.key)) {
-                  e.preventDefault();
-                }
-              }}
-              placeholder="Enter number of clicks"
-              min={0}
-              max={sourceGrinder ? grinderData[sourceGrinder].maxClicks : 100}
-            />
-            {sourceValue && sourceGrinder && (
-              <p className="text-sm text-gray-600">
-                ≈ {calculateMicrons(sourceGrinder, Number(sourceValue))} microns
-              </p>
-            )}
-          </div>
-
-          {result && (
-            <div className="mt-4 p-4 bg-gray-100 rounded-lg space-y-2">
-              <p className="text-center text-lg font-medium">
-                Converted Setting: {result.clicks} clicks
-              </p>
-              <p className="text-center text-sm text-gray-600">
-                ≈ {result.microns} microns
-              </p>
+    <>
+      <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+        <Card className="w-full max-w-md mx-4">
+          <CardHeader>
+            <CardTitle className="text-center">Coffee Grinder Size Converter</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">From Grinder:</label>
+              <Select value={sourceGrinder} onValueChange={(value: string) => {
+                setSourceGrinder(value);
+                setSourceValue('');
+                setResult(null);
+              }}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select source grinder" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.keys(grinderData).map(grinder => (
+                    <SelectItem key={grinder} value={grinder}>
+                      {grinder}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {sourceGrinder && (
+                <p className="text-xs text-gray-600">
+                  {grinderData[sourceGrinder].micronsPerClick} microns per click, max {grinderData[sourceGrinder].maxClicks} clicks
+                </p>
+              )}
             </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">To Grinder:</label>
+              <Select value={targetGrinder} onValueChange={(value: string) => {
+                setTargetGrinder(value);
+                setResult(null);
+              }}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select target grinder" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.keys(grinderData).map(grinder => (
+                    <SelectItem key={grinder} value={grinder}>
+                      {grinder}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {targetGrinder && (
+                <p className="text-xs text-gray-600">
+                  {grinderData[targetGrinder].micronsPerClick} microns per click, max {grinderData[targetGrinder].maxClicks} clicks
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Grind Setting (clicks):</label>
+              <Input
+                type="number"
+                step="1"
+                value={sourceValue}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+                  // Only allow positive integers within maxClicks limit
+                  if (/^\d*$/.test(value)) {
+                    const numValue = parseInt(value);
+                    if (!isNaN(numValue) && sourceGrinder) {
+                      if (numValue <= grinderData[sourceGrinder].maxClicks) {
+                        setSourceValue(value);
+                        handleConversion(value);
+                      }
+                    } else if (value === '') {
+                      setSourceValue('');
+                      setResult(null);
+                    }
+                  }
+                }}
+                onKeyPress={(e) => {
+                  // Prevent non-numeric input
+                  if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                placeholder="Enter number of clicks"
+                min={0}
+                max={sourceGrinder ? grinderData[sourceGrinder].maxClicks : 100}
+              />
+              {sourceValue && sourceGrinder && (
+                <p className="text-sm text-gray-600">
+                  ≈ {calculateMicrons(sourceGrinder, Number(sourceValue))} microns
+                </p>
+              )}
+            </div>
+
+            {result && (
+              <div className="mt-4 p-4 bg-gray-100 rounded-lg space-y-2">
+                <p className="text-center text-lg font-medium">
+                  Converted Setting: {result.clicks} clicks
+                </p>
+                <p className="text-center text-sm text-gray-600">
+                  ≈ {result.microns} microns
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+      <Analytics />
+    </>
   );
 };
 
