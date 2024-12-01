@@ -106,8 +106,15 @@ const CoffeeGrinderConverter = () => {
       return;
     }
 
-    const clicks = Number(value);
-    const sourceMicrons = calculateMicrons(sourceGrinder, clicks);
+    // Check if value is a valid positive integer
+    const parsedValue = parseInt(value);
+    if (isNaN(parsedValue) || parsedValue < 0 || !Number.isInteger(parsedValue)) {
+      setSourceValue(''); // Clear invalid input
+      setResult(null);
+      return;
+    }
+    
+    const sourceMicrons = calculateMicrons(sourceGrinder, parsedValue);
     const targetClicks = calculateClicks(targetGrinder, sourceMicrons);
     const targetMicrons = calculateMicrons(targetGrinder, targetClicks);
     
@@ -177,10 +184,21 @@ const CoffeeGrinderConverter = () => {
             <label className="text-sm font-medium">Grind Setting (clicks):</label>
             <Input
               type="number"
+              step="1"
               value={sourceValue}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setSourceValue(e.target.value);
-                handleConversion(e.target.value);
+                const value = e.target.value;
+                // Only allow positive integers
+                if (/^\d*$/.test(value)) { // This regex only allows digits
+                  setSourceValue(value);
+                  handleConversion(value);
+                }
+              }}
+              onKeyPress={(e) => {
+                // Prevent non-numeric input
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault();
+                }
               }}
               placeholder="Enter number of clicks"
               min={0}
